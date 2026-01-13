@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    
+    <!-- Homepage -->
+    <url>
+        <loc>https://htumartialarts.42web.io/</loc>
+        <lastmod>2026-01-12</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+    </url>
+    
+    <!-- Classes Page -->
+    <url>
+        <loc>https://htumartialarts.42web.io/classes_premium.php</loc>
+        <lastmod>2026-01-12</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+    </url>
+    
+    <!-- Prices/Memberships Page -->
+    <url>
+        <loc>https://htumartialarts.42web.io/prices.php</loc>
+        <lastmod>2026-01-12</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.9</priority>
+    </url>
+    
+    <!-- Login Page -->
+    <url>
+        <loc>https://htumartialarts.42web.io/login.php</loc>
+        <lastmod>2026-01-12</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    
+    <!-- Signup Page -->
+    <url>
+        <loc>https://htumartialarts.42web.io/signup.php</loc>
+        <lastmod>2026-01-12</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+</urlset>
