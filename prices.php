@@ -1,129 +1,123 @@
 <?php
 require_once 'includes/init.php';
-$pageTitle = "Memberships & Pricing";
-include 'includes/header.php';
+$pageTitle = "Memberships";
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo $pageTitle; ?> | HTU Martial Arts</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="css/sport-theme.css">
+</head>
+<body>
 
-<!-- Hero Banner -->
-<section class="page-section bg-dark text-center pb-5">
-    <div class="container pt-5">
-        <h6 class="text-primary ls-2 mb-2">Join The Tribe</h6>
-        <h1 class="mb-4">Invest In Yourself</h1>
-        <p class="text-muted lead mb-4" style="max-width: 600px; margin: 0 auto;">Transparent pricing. No hidden fees. Cancel anytime.</p>
-    </div>
-</section>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="index.php" class="nav-logo">HTU MARTIAL ARTS</a>
+            <div class="nav-links">
+                <a href="index.php" class="nav-link">Home</a>
+                <a href="classes_premium.php" class="nav-link">Classes</a>
+                <a href="prices.php" class="nav-link text-accent">Memberships</a>
+                <?php if(isset($_SESSION['user_id'])): ?>
+                    <a href="dashboard.php" class="nav-link">Dashboard</a>
+                    <a href="logout.php" class="nav-link">Logout</a>
+                <?php else: ?>
+                    <a href="login.php" class="nav-link">Login</a>
+                <?php endif; ?>
+                <a href="signup.php" class="btn btn-primary btn-sm">Join Now</a>
+            </div>
+        </div>
+    </nav>
 
-<!-- Pricing Section -->
-<section class="page-section">
-    <div class="container">
-        
-        <?php
-        $recurring_plans = [];
-        $one_off_plans = [];
-        
-        $sql = "SELECT id, type, price, description FROM memberships ORDER BY price ASC";
-        $result = $conn->query($sql);
-        
-        if ($result->num_rows > 0) {
-            while($row = $result->fetch_assoc()) {
-                if (stripos($row['type'], 'Private') !== false || stripos($row['type'], 'Personal') !== false || stripos($row['type'], 'Session') !== false) {
-                    $one_off_plans[] = $row;
-                } else {
-                    $recurring_plans[] = $row;
+    <!-- Hero -->
+    <section class="section text-center" style="padding-top: 120px; padding-bottom: 4rem;">
+        <div class="container">
+            <span class="section-label">MEMBERSHIPS</span>
+            <h1 class="section-title mb-3">INVEST IN YOURSELF</h1>
+            <p style="max-width: 600px; margin: 0 auto 2rem;">Transparent pricing. No hidden fees. Cancel anytime.</p>
+        </div>
+    </section>
+
+    <!-- Plans -->
+    <section class="section pt-0">
+        <div class="container">
+            
+            <?php
+            $recurring_plans = [];
+            $one_off_plans = [];
+            
+            $sql = "SELECT id, type, price, description FROM memberships ORDER BY price ASC";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            
+            if ($result && $result->num_rows > 0) {
+                while($row = $result->fetch_assoc()) {
+                    if (stripos($row['type'], 'Private') !== false || stripos($row['type'], 'Personal') !== false || stripos($row['type'], 'Session') !== false) {
+                        $one_off_plans[] = $row;
+                    } else {
+                        $recurring_plans[] = $row;
+                    }
                 }
             }
-        }
-        ?>
+            ?>
 
-        <!-- recurring Memberships - 3 Col Grid -->
-        <div class="row g-0 justify-content-center align-items-stretch">
-            <?php if (!empty($recurring_plans)): ?>
+            <!-- Recurring Grid -->
+            <div class="grid grid-3 mb-5">
                 <?php foreach($recurring_plans as $index => $plan): 
-                    $is_popular = (stripos($plan['type'], 'Elite') !== false || stripos($plan['type'], 'Unlimited') !== false || $index === 1);
-                    $card_class = $is_popular ? 'card-sport border-active scale-up' : 'card-sport';
-                    $btn_class = $is_popular ? 'btn-primary' : 'btn-outline';
+                    $is_popular = (stripos($plan['type'], 'Intermediate') !== false || $index === 1);
                 ?>
-                <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
-                    <div class="<?php echo $card_class; ?> text-center h-100 d-flex flex-column p-5" style="<?php echo $is_popular ? 'z-index: 2; border-color: var(--color-primary); background: #0f0f15;' : ''; ?>">
-                        <?php if($is_popular): ?>
-                            <div class="badge bg-primary position-absolute top-0 start-50 translate-middle-x mt-3">MOST POPULAR</div>
-                        <?php endif; ?>
-                        
-                        <h3 class="mb-3 text-uppercase"><?php echo htmlspecialchars($plan['type']); ?></h3>
-                        <div class="display-3 fw-bold text-white mb-2">
-                            <span class="fs-4 align-top">$</span><?php echo number_format($plan['price'], 0); ?>
-                        </div>
-                        <p class="text-muted small mb-4">PER MONTH</p>
-                        
-                        <ul class="list-unstyled text-start mb-5 mx-auto" style="max-width: 200px;">
-                            <li class="mb-2"><i class="bi bi-check2 text-primary me-2"></i>Access to facilities</li>
-                            <li class="mb-2"><i class="bi bi-check2 text-primary me-2"></i>Expert coaching</li>
-                            <?php if($is_popular): ?>
-                                <li class="mb-2"><i class="bi bi-check2 text-primary me-2"></i>Unlimited Classes</li>
-                                <li class="mb-2"><i class="bi bi-check2 text-primary me-2"></i>Free Gear Rental</li>
-                            <?php endif; ?>
-                        </ul>
-                        
-                        <div class="mt-auto w-100">
-                            <a href="signup.php?plan_id=<?php echo $plan['id']; ?>" class="btn <?php echo $btn_class; ?> w-100 btn-lg">Choose Plan</a>
-                        </div>
-                    </div>
+                <div class="card price-card <?php echo $is_popular ? 'featured' : ''; ?>">
+                    <h3 class="card-title <?php echo $is_popular ? 'text-accent' : ''; ?>"><?php echo htmlspecialchars($plan['type']); ?></h3>
+                    <div class="price">$<?php echo number_format($plan['price'], 0); ?><span>/mo</span></div>
+                    <p class="card-text mb-4"><?php echo htmlspecialchars($plan['description']); ?></p>
+                    <a href="signup.php?plan_id=<?php echo $plan['id']; ?>" class="btn <?php echo $is_popular ? 'btn-primary' : 'btn-outline'; ?> w-100 mt-auto">Select Plan</a>
                 </div>
                 <?php endforeach; ?>
-            <?php endif; ?>
-        </div>
+            </div>
 
-        <!-- Services Grid (if any) -->
-        <?php if (!empty($one_off_plans)): ?>
-        <div class="section-header text-center mt-5 pt-5">
-            <span class="section-label">PRIVATE TRAINING</span>
-            <h3 class="mb-4">Personalized Sessions</h3>
-        </div>
-        
-        <div class="row g-4 justify-content-center">
-            <?php foreach($one_off_plans as $plan): ?>
-            <div class="col-md-4">
-                <div class="card-sport text-center">
-                    <h4 class="mb-3"><?php echo htmlspecialchars($plan['type']); ?></h4>
-                    <div class="display-5 fw-bold text-white mb-3">
-                        $<?php echo number_format($plan['price'], 0); ?>
+            <!-- Private/One-off Grid -->
+             <?php if (!empty($one_off_plans)): ?>
+                <div class="text-center mb-5 mt-5">
+                    <span class="section-label">PRIVATE TRAINING</span>
+                    <h2 class="section-title" style="font-size: 2rem;">PERSONALIZED SESSIONS</h2>
+                </div>
+                <div class="grid grid-3">
+                    <?php foreach($one_off_plans as $plan): ?>
+                    <div class="card price-card">
+                        <h3 class="card-title"><?php echo htmlspecialchars($plan['type']); ?></h3>
+                        <div class="price">$<?php echo number_format($plan['price'], 0); ?><span>/session</span></div>
+                        <p class="card-text mb-4"><?php echo htmlspecialchars($plan['description']); ?></p>
+                        <a href="signup.php?plan_id=<?php echo $plan['id']; ?>" class="btn btn-outline w-100 mt-auto">Book Session</a>
                     </div>
-                    <p class="text-muted mb-4"><?php echo htmlspecialchars($plan['description']); ?></p>
-                    <a href="signup.php?plan_id=<?php echo $plan['id']; ?>" class="btn btn-outline w-100">Book Session</a>
+                    <?php endforeach; ?>
                 </div>
-            </div>
-            <?php endforeach; ?>
+            <?php endif; ?>
+
         </div>
-        <?php endif; ?>
+    </section>
 
-    </div>
-</section>
-
-<!-- FAQ / Additional Info -->
-<section class="page-section bg-dark">
-    <div class="container text-center">
-        <h3 class="mb-4">Common Questions</h3>
-        <div class="row justify-content-center">
-            <div class="col-md-8 text-start">
-                <div class="mb-4">
-                    <h5 class="text-primary mb-2">Do I need experience?</h5>
-                    <p class="text-muted">No! We welcome all levels, from complete beginners to pro fighters.</p>
-                </div>
-                <div class="mb-4">
-                    <h5 class="text-primary mb-2">What gear do I need?</h5>
-                    <p class="text-muted">For your first class, just bring comfortable athletic wear and a water bottle. We have loaner gear available.</p>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container d-flex justify-content-between align-items-center flex-column flex-md-row">
+            <div class="mb-4 mb-md-0">
+                <h4 class="mb-2">HTU MARTIAL ARTS</h4>
+                <p class="mb-0 text-muted">© 2026 HTU Martial Arts. All Rights Reserved.</p>
+            </div>
+            <div class="d-flex flex-column align-items-center align-items-md-end">
+                <div class="footer-links mb-2">
+                    <a href="index.php">Home</a>
+                    <a href="classes_premium.php">Classes</a>
+                    <a href="prices.php">Memberships</a>
+                    <a href="login.php">Login</a>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </footer>
 
-<!-- Upgrade Modal Logic (Hidden form handling) -->
-<?php
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['new_plan_id']) && isset($_SESSION['user_id'])) {
-    // ... logic for upgrade handling would go here or be processed via a separate endpoint ...
-    // For now, keeping the display logic clean.
-}
-?>
-
-<?php include 'includes/footer.php'; ?>
+</body>
+</html>
