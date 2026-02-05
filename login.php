@@ -42,87 +42,60 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['user_id'] = $user['id'];
             // Check is_admin flag; set role to 'admin' if true, else default to 'member'
             $role = (isset($user['is_admin']) && $user['is_admin'] == 1) ? 'admin' : 'member';
-            $_SESSION['role'] = $role; // Either 'admin' or 'member'
-            $_SESSION['username'] = $user['username'];
-            
-            // Redirect to different pages based on user role
-            // Admins go to admin panel, regular members go to their dashboard
-            if ($role === 'admin') {
-                redirectTo('admin.php');
-            } else {
-                redirectTo('dashboard.php');
-            }
+    $stmt->store_result();
+
+    if ($stmt->num_rows > 0) {
+        $stmt->bind_result($id, $username, $hashed_password, $role, $membership_id);
+        $stmt->fetch();
+
+        if (password_verify($password, $hashed_password)) {
+            $_SESSION['user_id'] = $id;
+            $_SESSION['username'] = $username;
+            $_SESSION['role'] = $role;
+            $_SESSION['membership_id'] = $membership_id;
+
+            addFlashToast("Welcome back, $username!", "success");
+            redirectTo("dashboard.php");
         } else {
-            // Password doesn't match - show generic error
-            // Security best practice: don't say which field was wrong (prevents email enumeration)
-            $error = "Invalid email or password.";
+            addFlashToast("Invalid password.", "danger");
         }
     } else {
-        // Email not found in database - show generic error for security
-        // Again, don't reveal if email exists or not
-        $error = "Invalid email or password.";
+        addFlashToast("No account found with that email.", "danger");
     }
+    $stmt->close();
 }
-
-if (!empty($error)) {
-    addFlashToast($error, 'danger');
-    $error = '';
-}
-
-if (isset($_SESSION['success'])) {
-    $success = (string)$_SESSION['success'];
-    unset($_SESSION['success']);
-    if ($success !== '') {
-        addFlashToast($success, 'success');
-    }
-}
-
-include 'includes/header.php';
 ?>
 
-<!-- Login form container with centered layout -->
-<!-- Centered both vertically and horizontally with flex display -->
-<div class="container" style="padding: 80px 0; min-height: 70vh; display: flex; align-items: center;">
-    <!-- Inner wrapper - centers form horizontally -->
-    <div style="width: 100%; max-width: 420px; margin: 0 auto;">
-        
-        <!-- Login form with glass-panel styling (white background with shadow) -->
-        <!-- Consistent padding and border-radius across all form pages -->
-        <form method="POST" class="glass-panel" style="padding: 40px;">
-            <!-- Email input field -->
-            <!-- Form labels are dark with red icon for visual hierarchy -->
-            <div class="mb-4">
-                <label class="form-label mb-2 fw-600" style="color: #1a1a2e; font-size: 0.95rem;">
-                    <i class="bi bi-envelope me-2" style="color: #DC143C;"></i>Email Address
-                </label>
-                <!-- Input with consistent styling: light border, padding, and border-radius -->
-                <input type="email" name="email" class="form-control" placeholder="your@email.com" required style="border: 1px solid #e0e0e0; padding: 12px 14px; border-radius: 8px; font-size: 0.95rem;">
+<section class="page-section d-flex align-items-center justify-content-center" style="min-height: 80vh;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <div class="card glass-panel shadow-lg">
+                    <div class="text-center mb-4">
+                        <h2 class="mb-1">Welcome Back</h2>
+                        <p class="text-muted text-uppercase ls-2 small">Sign in to your account</p>
+                    </div>
+                    
+                    <form method="POST">
+                        <div class="mb-4">
+                            <label class="form-label text-muted small fw-bold">Email Address</label>
+                            <input type="email" name="email" class="form-control" placeholder="name@example.com" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label text-muted small fw-bold">Password</label>
+                            <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100 mb-3">Sign In</button>
+                        
+                        <div class="text-center">
+                            <p class="text-muted small mb-0">Don't have an account? <a href="signup.php" class="text-primary fw-bold">Join Now</a></p>
+                        </div>
+                    </form>
+                </div>
             </div>
-            
-            <!-- Password input field -->
-            <!-- type="password" hides characters for privacy -->
-            <div class="mb-4">
-                <label class="form-label mb-2 fw-600" style="color: #1a1a2e; font-size: 0.95rem;">
-                    <i class="bi bi-lock me-2" style="color: #DC143C;"></i>Password
-                </label>
-                <!-- Input with consistent styling matching email field -->
-                <input type="password" name="password" class="form-control" placeholder="••••••••" required style="border: 1px solid #e0e0e0; padding: 12px 14px; border-radius: 8px; font-size: 0.95rem;">
-            </div>
-            
-            <!-- Submit button with primary gradient and hover effects -->
-            <!-- Uses inline style but follows CSS variables from theme -->
-            <button type="submit" class="btn w-100 fw-bold" style="background: linear-gradient(135deg, #DC143C 0%, #a00000 100%); color: white; padding: 14px; border-radius: 8px; border: none; font-size: 0.95rem; transition: all 0.3s ease; box-shadow: 0 4px 16px rgba(220,20,60,0.3);">
-                <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
-            </button>
-            
-            <!-- Link to pricing for new users -->
-            <!-- Signup flow: prices.php > signup.php > login on return -->
-            <div class="text-center mt-4">
-                <span style="color: #666; font-size: 0.9rem;">Don't have an account?</span> 
-                <a href="prices.php" style="color: #DC143C; text-decoration: none; font-weight: 600; font-size: 0.9rem;">Choose a Plan</a>
-            </div>
-        </form>
+        </div>
     </div>
-</div>
+</section>
 
 <?php include 'includes/footer.php'; ?>

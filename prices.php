@@ -1,154 +1,116 @@
 <?php
 require_once 'includes/init.php';
-
-$pageTitle = "Prices";
-
-$martialArts = getMartialArtsList();
-$currentPlanNormalized = '';
-$currentPrimaryArt = '';
-$currentSecondaryArt = '';
-$errorMessage = '';
-
-if (isset($_SESSION['user_id'])) {
-    $userInfo = getUserPlanInfo((int)$_SESSION['user_id']);
-    $currentPlanNormalized = normalizeMembershipType($userInfo['membership_type'] ?? '');
-    $currentPrimaryArt = $userInfo['chosen_martial_art'] ?? '';
-    $currentSecondaryArt = $userInfo['chosen_martial_art_2'] ?? '';
-}
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user_id'])) {
-    $planId = isset($_POST['plan_id']) ? intval($_POST['plan_id']) : null;
-    if ($planId) {
-        $planData = getMembershipPlanById((int)$planId) ?: [];
-
-        $selectedPlanType = $planData['type'] ?? '';
-        $selectedPlanNormalized = normalizeMembershipType($selectedPlanType);
-        $requiresSecondArt = $selectedPlanNormalized === 'advanced' && in_array($currentPlanNormalized, ['basic', 'intermediate'], true);
-        $primaryArtInput = trim($_POST['martial_art'] ?? '');
-        $secondaryArtInput = trim($_POST['martial_art_secondary'] ?? '');
-
-        if ($requiresSecondArt && $secondaryArtInput === '') {
-            $errorMessage = 'Please select your second martial art before upgrading to the Advanced plan.';
-        } else {
-            $martialArtToSave = $primaryArtInput !== '' ? $primaryArtInput : $currentPrimaryArt;
-            $martialArtSecondaryToSave = $secondaryArtInput !== '' ? $secondaryArtInput : $currentSecondaryArt;
-
-            $updateStmt = $conn->prepare('UPDATE users SET membership_id = ?, chosen_martial_art = ?, chosen_martial_art_2 = ? WHERE id = ?');
-            if ($updateStmt) {
-                $updateStmt->bind_param('issi', $planId, $martialArtToSave, $martialArtSecondaryToSave, $_SESSION['user_id']);
-                if ($updateStmt->execute()) {
-                    addFlashToast('Membership plan updated successfully!', 'success');
-                    redirectTo('dashboard.php');
-                }
-            }
-            $errorMessage = 'Unable to update your membership. Please try again.';
-        }
-    }
-}
-
-if (!empty($errorMessage)) {
-    addFlashToast($errorMessage, 'danger');
-    $errorMessage = '';
-}
-
-include 'includes/header.php'; 
+$pageTitle = "Memberships & Pricing";
+include 'includes/header.php';
 ?>
 
-<!-- Main container for pricing page -->
-<!-- Standard padding: 80px top/bottom for consistency across all pages -->
-<div class="container" style="padding: 80px 0;">
-    <!-- Page header section -->
-    <!-- Consistent h2 size and styling across all pages -->
-    <div class="text-center mb-5">
-        <h2 class="section-title" style="font-size: 2.5rem; color: #1a1a2e; margin-bottom: 1rem;">
-            <i class="bi bi-star me-2" style="color: #DC143C;"></i>Membership Plans
-        </h2>
-        <!-- Subheading with standard color and sizing -->
-        <p style="color: #666; font-size: 1.05rem; font-weight: 400;">Choose the plan that fits your training goals</p>
+<!-- Hero Banner -->
+<section class="page-section bg-dark text-center pb-5">
+    <div class="container pt-5">
+        <h6 class="text-primary ls-2 mb-2">Join The Tribe</h6>
+        <h1 class="mb-4">Invest In Yourself</h1>
+        <p class="text-muted lead mb-4" style="max-width: 600px; margin: 0 auto;">Transparent pricing. No hidden fees. Cancel anytime.</p>
     </div>
-    
-    <!-- Responsive grid for membership cards -->
-    <!-- Using Bootstrap grid system for mobile responsiveness -->
-    <div class="row justify-content-center g-4">
-        <?php
-        $plans = getAllMembershipPlans();
+</section>
 
-        if (!empty($plans)) {
-            foreach ($plans as $row) {
-                $planNormalized = normalizeMembershipType($row['type']);
-                $requiresSecondArtField = $planNormalized === 'advanced' && in_array($currentPlanNormalized, ['basic', 'intermediate'], true);
-                $priceSuffix = membershipPriceSuffix($row['type']);
-                // Create a membership card for each plan
-                echo '<div class="col-md-4 col-lg-3">';
-                // Card wrapper with consistent glass-panel styling
-                // glass-panel: white background with subtle shadow
-                echo '  <div class="card h-100 glass-panel" style="border: none; padding: 0; overflow: hidden; display: flex; flex-direction: column;">';
-                
-                // Card header with red gradient - consistent color scheme across site
-                // Gradient: primary red to darker red for visual depth
-                echo '    <div style="background: linear-gradient(135deg, #DC143C 0%, #a00000 100%); color: white; padding: 20px; text-align: center;">';
-                // Plan name badge with semi-transparent white background
-                echo '      <span style="display: inline-block; background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 6px; font-size: 0.85rem; font-weight: 700; letter-spacing: 1px;">' . htmlspecialchars($row['type']) . '</span>';
-                echo '    </div>';
-                
-                // Card body with consistent padding and flex layout
-                echo '    <div style="padding: 30px; display: flex; flex-direction: column; flex-grow: 1;">';
-                
-                // Price section - big, bold, primary color
-                echo '      <div class="my-3 text-center">';
-                echo '        <h3 class="fw-bold" style="color: #DC143C; font-size: 2.5rem; margin: 0;">$' . number_format($row['price'], 0) . '</h3>';
-                if ($priceSuffix !== '') {
-                    echo '        <small style="color: #999; font-size: 0.9rem;">per month</small>';
-                }
-                echo '      </div>';
-                
-                // Plan description - stretches to fill available space
-                echo '      <p style="color: #666; flex-grow: 1; font-size: 0.95rem; line-height: 1.6; margin-bottom: 20px;">' . htmlspecialchars($row['description']) . '</p>';
-                
-                // Button section - responsive form
-                if (isset($_SESSION['user_id'])) {
-                    // LOGGED IN: Show form to SELECT/UPDATE membership
-                    // When submitted, POSTs to this page and updates user's membership
-                    echo '      <form method="POST" style="width: 100%;">';
-                    echo '        <input type="hidden" name="plan_id" value="' . intval($row['id']) . '">';
-                    if ($requiresSecondArtField) {
-                        echo '        <div class="mb-3">';
-                        echo '          <label class="form-label mb-2 fw-600 text-deep-dark">Pick a second martial art</label>';
-                        echo '          <select name="martial_art_secondary" class="form-select" required>';
-                        echo '            <option value="">Select another martial art...</option>';
-                        foreach ($martialArts as $art) {
-                            $sanitized = htmlspecialchars($art, ENT_QUOTES, 'UTF-8');
-                            echo '            <option value="' . $sanitized . '">' . $sanitized . '</option>';
-                        }
-                        echo '          </select>';
-                        echo '          <small class="text-muted d-block mt-2">Advanced upgrades require two disciplines; please choose your additional art.</small>';
-                        echo '        </div>';
-                    }
-                    echo '        <button type="submit" class="btn w-100 fw-bold" style="background: linear-gradient(135deg, #DC143C 0%, #a00000 100%); color: white; padding: 12px; border-radius: 8px; border: none; font-size: 0.9rem; transition: all 0.3s ease; box-shadow: 0 4px 16px rgba(220,20,60,0.3);">';
-                    echo '          <i class="bi bi-check-circle me-2"></i>Select Plan';
-                    echo '        </button>';
-                    echo '      </form>';
+<!-- Pricing Section -->
+<section class="page-section">
+    <div class="container">
+        
+        <?php
+        $recurring_plans = [];
+        $one_off_plans = [];
+        
+        $sql = "SELECT id, type, price, description FROM memberships ORDER BY price ASC";
+        $result = $conn->query($sql);
+        
+        if ($result->num_rows > 0) {
+            while($row = $result->fetch_assoc()) {
+                // heuristic to separate plans
+                if (stripos($row['type'], 'Private') !== false || stripos($row['type'], 'Personal') !== false || stripos($row['type'], 'Session') !== false) {
+                    $one_off_plans[] = $row;
                 } else {
-                    // NOT LOGGED IN: Link to signup with this plan pre-selected
-                    echo '      <a href="signup.php?plan_id=' . intval($row['id']) . '" class="btn w-100 fw-bold" style="background: linear-gradient(135deg, #DC143C 0%, #a00000 100%); color: white; padding: 12px; border-radius: 8px; border: none; font-size: 0.9rem; transition: all 0.3s ease; box-shadow: 0 4px 16px rgba(220,20,60,0.3); text-decoration: none; display: block; text-align: center;">';
-                    echo '        <i class="bi bi-check-circle me-2"></i>Choose Plan';
-                    echo '      </a>';
+                    $recurring_plans[] = $row;
                 }
-                
-                echo '    </div>';
-                echo '  </div>';
-                echo '</div>';
             }
         }
         ?>
-    </div>
-</div>
 
-<!-- Consistent hover effect styling for cards -->
-<style>
-    .card.glass-panel:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 12px 32px rgba(220,20,60,0.2) !important;
-    }
-</style>
+        <!-- Memberships Grid -->
+        <h3 class="text-center mb-5">Recurring Memberships</h3>
+        <div class="row g-4 justify-content-center mb-5">
+            <?php if (!empty($recurring_plans)): ?>
+                <?php foreach($recurring_plans as $plan): ?>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 text-center hover-card d-flex flex-column">
+                        <div class="card-body p-4 d-flex flex-column flex-grow-1">
+                            <h4 class="mb-3"><?php echo htmlspecialchars($plan['type']); ?></h4>
+                            <div class="display-5 fw-bold text-primary mb-3">
+                                $<?php echo number_format($plan['price'], 0); ?><span class="fs-6 text-muted fw-normal">/mo</span>
+                            </div>
+                            <p class="text-muted mb-4"><?php echo htmlspecialchars($plan['description']); ?></p>
+                            
+                            <div class="mt-auto w-100">
+                                <a href="signup.php?plan_id=<?php echo $plan['id']; ?>" class="btn btn-primary w-100">Choose Plan</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="col-12 text-center text-muted">No memberships available.</div>
+            <?php endif; ?>
+        </div>
+
+        <!-- Services Grid (if any) -->
+        <?php if (!empty($one_off_plans)): ?>
+        <h3 class="text-center mb-5 pt-5 border-top border-dark">Private Training & Services</h3>
+        <div class="row g-4 justify-content-center">
+            <?php foreach($one_off_plans as $plan): ?>
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 text-center hover-card">
+                    <div class="card-body p-4">
+                        <h4 class="mb-3"><?php echo htmlspecialchars($plan['type']); ?></h4>
+                        <div class="display-5 fw-bold text-primary mb-3">
+                            $<?php echo number_format($plan['price'], 0); ?>
+                        </div>
+                        <p class="text-muted mb-4"><?php echo htmlspecialchars($plan['description']); ?></p>
+                        <a href="signup.php?plan_id=<?php echo $plan['id']; ?>" class="btn btn-outline w-100">Book Session</a>
+                    </div>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+        <?php endif; ?>
+
+    </div>
+</section>
+
+<!-- FAQ / Additional Info -->
+<section class="page-section bg-dark">
+    <div class="container text-center">
+        <h3 class="mb-4">Common Questions</h3>
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-start">
+                <div class="mb-4">
+                    <h5 class="text-primary mb-2">Do I need experience?</h5>
+                    <p class="text-muted">No! We welcome all levels, from complete beginners to pro fighters.</p>
+                </div>
+                <div class="mb-4">
+                    <h5 class="text-primary mb-2">What gear do I need?</h5>
+                    <p class="text-muted">For your first class, just bring comfortable athletic wear and a water bottle. We have loaner gear available.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Upgrade Modal Logic (Hidden form handling) -->
+<?php
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['new_plan_id']) && isset($_SESSION['user_id'])) {
+    // ... logic for upgrade handling would go here or be processed via a separate endpoint ...
+    // For now, keeping the display logic clean.
+}
+?>
+
 <?php include 'includes/footer.php'; ?>

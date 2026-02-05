@@ -178,14 +178,15 @@ $seo = $seoConfig[$currentPage] ?? [
 <body>
 
 <!-- Navigation bar -->
+<!-- Navigation bar -->
 <nav class="navbar navbar-expand-lg navbar-dark navbar-glass">
   <div class="container">
-    <a class="navbar-brand d-flex align-items-center" href="index.php" aria-label="HTU Martial Arts" style="font-weight: 700; font-size: 1.5rem; text-transform: uppercase;">
+    <a class="navbar-brand d-flex align-items-center" href="index.php" aria-label="HTU Martial Arts">
       <img src="images/logo-desktop.svg" alt="HTU Martial Arts Logo" style="height: 45px; margin-right: 12px;" class="navbar-logo">
       <span class="navbar-brand-text">HTU MARTIAL ARTS</span>
     </a>
     
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="border-color: rgba(213, 6, 6, 0.78);">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
     

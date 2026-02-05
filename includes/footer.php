@@ -3,33 +3,33 @@
 <!-- It contains the footer content and loads necessary JavaScript libraries -->
 
 <!-- Footer section at the bottom of the page -->
-<footer class="site-footer text-center py-5 mt-5">
+<footer class="site-footer text-center">
     <div class="container">
         <!-- Footer logo -->
         <div class="footer-logo mb-3">
-            <img src="images/logo-footer.svg" alt="HTU Martial Arts" class="logo-footer">
+            <img src="images/logo-footer.svg" alt="HTU Martial Arts" class="logo-footer" style="height: 60px;">
         </div>
-        <!-- Copyright notice - displays current year dynamically -->
-        <p class="mb-0">&copy; <?php echo date('Y'); ?> HTU Martial Arts. All Rights Reserved.</p>
+        <!-- Copyright notice -->
+        <p class="mb-0 text-muted">&copy; <?php echo date('Y'); ?> HTU Martial Arts. All Rights Reserved.</p>
         
         <!-- Quick Links -->
-        <div class="footer-links mt-3">
-            <a href="index.php" class="text-white-50 mx-2">Home</a>
-            <a href="classes_premium.php" class="text-white-50 mx-2">Classes</a>
-            <a href="prices.php" class="text-white-50 mx-2">Memberships</a>
-            <a href="login.php" class="text-white-50 mx-2">Login</a>
+        <div class="footer-links mt-4 mb-4">
+            <a href="index.php" class="mx-3">Home</a>
+            <a href="classes_premium.php" class="mx-3">Classes</a>
+            <a href="prices.php" class="mx-3">Memberships</a>
+            <a href="login.php" class="mx-3">Login</a>
         </div>
         
-        <!-- Social Media Links (Update with your actual social media URLs) -->
-        <div class="social-links mt-3">
-            <a href="#" class="text-white-50 mx-2" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
-            <a href="#" class="text-white-50 mx-2" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-            <a href="#" class="text-white-50 mx-2" aria-label="Twitter"><i class="bi bi-twitter"></i></a>
+        <!-- Social Media Links -->
+        <div class="social-links mb-4">
+            <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+            <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+            <a href="#" aria-label="Twitter"><i class="bi bi-twitter"></i></a>
         </div>
         
-        <!-- SEO: Location Info -->
-        <p class="text-white-50 mt-3 mb-0" style="font-size: 0.875rem;">
-            <i class="bi bi-geo-alt me-1"></i> HTU, Amman, Jordan
+        <!-- Location Info -->
+        <p class="text-muted small mb-0">
+            <i class="bi bi-geo-alt me-1 text-primary"></i> HTU, Amman, Jordan
         </p>
     </div>
 </footer>
