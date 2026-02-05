@@ -1,7 +1,6 @@
 <?php
 require_once 'includes/init.php';
 $pageTitle = "Class Timetable";
-// Minimal navigation consistent with index.php
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -9,34 +8,23 @@ $pageTitle = "Class Timetable";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $pageTitle; ?> | HTU Martial Arts</title>
+    
+    <!-- SEO -->
+    <meta name="description" content="View our weekly martial arts schedule. Jiu-jitsu, Karate, Muay Thai, and Judo classes for all levels in Amman.">
+    
+    <!-- Assets -->
+    <link rel="icon" href="images/favicon.svg">
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="css/sport-theme.css">
 </head>
 <body>
 
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="container nav-container">
-            <a href="index.php" class="nav-logo">HTU MARTIAL ARTS</a>
-            <div class="nav-links">
-                <a href="index.php" class="nav-link">Home</a>
-                <a href="classes_premium.php" class="nav-link text-accent">Classes</a>
-                <a href="prices.php" class="nav-link">Memberships</a>
-                <?php if(isset($_SESSION['user_id'])): ?>
-                    <a href="dashboard.php" class="nav-link">Dashboard</a>
-                    <a href="logout.php" class="nav-link">Logout</a>
-                <?php else: ?>
-                    <a href="login.php" class="nav-link">Login</a>
-                <?php endif; ?>
-                <a href="signup.php" class="btn btn-primary btn-sm">Join Now</a>
-            </div>
-        </div>
-    </nav>
+    <?php include 'includes/navbar.php'; ?>
 
     <!-- Hero -->
-    <section class="section text-center" style="padding-top: 120px; padding-bottom: 4rem;">
-        <div class="container">
+    <section class="section text-center inner-hero" style="padding-top: 140px; padding-bottom: 4rem;">
+        <div class="container animate-in">
             <span class="section-label">SCHEDULE</span>
             <h1 class="section-title mb-3">YOUR WEEK. YOUR RULES.</h1>
             <p style="max-width: 600px; margin: 0 auto 2rem;">Train when you want. Choose what fits your life.</p>
@@ -44,7 +32,7 @@ $pageTitle = "Class Timetable";
     </section>
 
     <!-- Schedule -->
-    <section class="section pt-0">
+    <section class="section pt-0 fade-in-up">
         <div class="container">
             
             <!-- Filters -->
@@ -59,7 +47,6 @@ $pageTitle = "Class Timetable";
 
             <div class="grid grid-3" id="schedule-grid">
                 <?php
-                // Logic preservation
                 $sql = "SELECT id, class_name, day_of_week, start_time, end_time, martial_art, age_group, is_kids_class 
                     FROM classes 
                     ORDER BY FIELD(day_of_week, 'Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'), start_time";
@@ -126,23 +113,7 @@ $pageTitle = "Class Timetable";
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container d-flex justify-content-between align-items-center flex-column flex-md-row">
-            <div class="mb-4 mb-md-0">
-                <h4 class="mb-2">HTU MARTIAL ARTS</h4>
-                <p class="mb-0 text-muted">© 2026 HTU Martial Arts. All Rights Reserved.</p>
-            </div>
-            <div class="d-flex flex-column align-items-center align-items-md-end">
-                <div class="footer-links mb-2">
-                    <a href="index.php">Home</a>
-                    <a href="classes_premium.php">Classes</a>
-                    <a href="prices.php">Memberships</a>
-                    <a href="login.php">Login</a>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <?php include 'includes/footer_new.php'; ?>
 
     <!-- Filter Script -->
     <script>
@@ -152,14 +123,12 @@ $pageTitle = "Class Timetable";
 
         filters.forEach(btn => {
             btn.addEventListener('click', () => {
-                // Remove active class
                 filters.forEach(f => {
                     f.classList.remove('active');
                     f.classList.remove('btn-primary');
                     f.classList.add('btn-outline');
                 });
                 
-                // Add active class
                 btn.classList.add('active');
                 btn.classList.remove('btn-outline');
                 btn.classList.add('btn-primary');
@@ -169,6 +138,7 @@ $pageTitle = "Class Timetable";
                 cards.forEach(card => {
                     if (filterValue === 'all' || card.getAttribute('data-art') === filterValue) {
                         card.style.display = 'flex';
+                        card.classList.add('fade-in-up', 'visible'); // Re-trigger anim
                     } else {
                         card.style.display = 'none';
                     }
@@ -177,12 +147,11 @@ $pageTitle = "Class Timetable";
         });
     });
 
-    // Booking function stub (if not defined elsewhere)
     if (typeof validateBooking !== 'function') {
         function validateBooking(classId, className, event) {
             if(confirm('Book ' + className + '?')) {
-                // Logic to handle booking
-                alert('Booking feature would process here.');
+                // Keep alert for now or implement AJAX booking later
+                alert('Booking feature coming soon!'); 
             }
         }
     }

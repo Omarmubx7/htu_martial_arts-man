@@ -54,12 +54,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up | HTU Martial Arts</title>
+    
+    <!-- SEO -->
+    <meta name="description" content="Create your account and start your martial arts journey. Join the tribe today.">
+    <link rel="icon" href="images/favicon.svg">
+
     <link rel="stylesheet" href="css/sport-theme.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 </head>
 <body>
     
     <div class="auth-container">
-        <div class="auth-card card">
+        <div class="auth-card card animate-in">
             <div class="text-center mb-5">
                 <a href="index.php" style="font-family: var(--font-heading); font-size: 1.5rem; color: var(--text-primary); text-decoration: none;">HTU MARTIAL ARTS</a>
                 <p class="text-muted mt-2">Start your legacy. Join the tribe.</p>
@@ -108,6 +114,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 
                 <div class="text-center mt-4">
                     <a href="login.php" style="color: var(--accent); font-size: 0.9rem;">Already have an account? Sign In</a>
+                    <br>
+                    <a href="index.php" class="text-muted small mt-3 d-inline-block">Back to Home</a>
                 </div>
             </form>
         </div>

@@ -35,12 +35,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | HTU Martial Arts</title>
+    
+    <!-- SEO -->
+    <meta name="description" content="Login to your HTU Martial Arts account to book classes and manage your membership.">
+    <link rel="icon" href="images/favicon.svg">
+    
     <link rel="stylesheet" href="css/sport-theme.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 </head>
 <body>
     
+    <!-- Use basic nav for auth pages or just keep clean? User asked for centralized inclusions so let's stick to it but maybe simplified. 
+         Actually, typically auth pages are standalone but having the nav is good UX. -->
+         
     <div class="auth-container">
-        <div class="auth-card card">
+        
+        <div class="auth-card card animate-in">
             <div class="text-center mb-5">
                 <a href="index.php" style="font-family: var(--font-heading); font-size: 1.5rem; color: var(--text-primary); text-decoration: none;">HTU MARTIAL ARTS</a>
                 <p class="text-muted mt-2">Welcome back. Sign in to your account.</p>
@@ -66,6 +76,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 
                 <div class="text-center mt-4">
                     <a href="signup.php" style="color: var(--accent); font-size: 0.9rem;">Don't have an account? Join Now</a>
+                    <br>
+                    <a href="index.php" class="text-muted small mt-3 d-inline-block">Back to Home</a>
                 </div>
             </form>
         </div>
