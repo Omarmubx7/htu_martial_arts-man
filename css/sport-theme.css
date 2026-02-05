@@ -1,55 +1,41 @@
 /* this works but idk why the gradients look nicer */
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=Roboto:wght@300;400;500;700&family=JetBrains+Mono:wght@400;700&family=Montserrat:wght@400;500;600;700&display=swap');
 
+/* =========================================
+   1. GLOBAL VARIABLES & RESET
+   ========================================= */
 :root {
-    /* Fonts */
-    --font-heading: 'Oswald', sans-serif;
-    --font-body: 'Roboto', sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
-
-    /* Colors - Dark, Athletic, Premium */
-    --color-background: #050509;
+    /* --- COLOR PALETTE (Aggressive Dark) --- */
+    --color-bg: #050509;
+    /* Deepest Black/Blue */
     --color-surface: #0B0B11;
-    --color-border: #27272F;
+    /* Card Background */
+    --color-surface-hover: #12121a;
 
-    --color-primary: #EF4444;
-    /* Fight Red */
-    --color-primary-dark: #B91C1C;
-    --color-primary-light: #F87171;
+    --color-primary: #DC143C;
+    /* Fight Red (Crimson) */
+    --color-primary-dark: #a00000;
+    --color-primary-glow: rgba(220, 20, 60, 0.4);
 
-    --color-text-primary: #F9FAFB;
+    --color-text-main: #FFFFFF;
     --color-text-muted: #9CA3AF;
 
-    --color-white: #FFFFFF;
-    --color-black: #000000;
+    --color-border: #27272F;
+    --color-border-active: #DC143C;
 
-    /* Semantic Colors */
-    --color-success: #10B981;
-    --color-warning: #F59E0B;
-    --color-error: #EF4444;
+    /* --- TYPOGRAPHY --- */
+    --font-heading: 'Oswald', sans-serif;
+    --font-body: 'Roboto', sans-serif;
 
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, #EF4444 0%, #B91C1C 100%);
-    --gradient-dark: linear-gradient(to bottom, #050509, #0B0B11);
-    --gradient-overlay: linear-gradient(to bottom, rgba(5, 5, 9, 0.3), rgba(5, 5, 9, 0.95));
+    /* --- SPACING & SHAPES --- */
+    --border-radius: 0px;
+    /* Sharp, aggressive corners */
+    --page-padding: 120px 0;
+    /* Generous vertical rhythm */
 
-    /* Shadows & Glass */
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    --shadow-glow: 0 0 20px rgba(239, 68, 68, 0.4);
-
-    /* Spacing */
-    --spacing-xs: 0.5rem;
-    --spacing-sm: 1rem;
-    --spacing-md: 1.5rem;
-    --spacing-lg: 2.5rem;
-    --spacing-xl: 5rem;
-
-    /* Transitions */
-    --transition-fast: 0.15s ease;
-    --transition-base: 0.3s ease;
-    --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    /* --- SHADOWS --- */
+    --shadow-soft: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    --shadow-glow: 0 0 20px var(--color-primary-glow);
 }
 
 * {
@@ -59,9 +45,9 @@
 }
 
 body {
+    background-color: var(--color-bg);
+    color: var(--color-text-main);
     font-family: var(--font-body);
-    background-color: var(--color-background);
-    color: var(--color-text-primary);
     line-height: 1.6;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
@@ -79,27 +65,11 @@ h4,
 h5,
 h6 {
     font-family: var(--font-heading);
+    color: var(--color-text-main);
     font-weight: 700;
     text-transform: uppercase;
-    color: var(--color-text-primary);
+    letter-spacing: 1px;
     margin-bottom: 1rem;
-    letter-spacing: 0.05em;
-}
-
-h1 {
-    font-size: clamp(3rem, 8vw, 6rem);
-    line-height: 0.95;
-    letter-spacing: 3px;
-}
-
-h2 {
-    font-size: clamp(2rem, 5vw, 3.5rem);
-    letter-spacing: 2.5px;
-}
-
-h3 {
-    font-size: clamp(1.5rem, 3vw, 2rem);
-    letter-spacing: 2px;
 }
 
 h5 #plans {
@@ -107,13 +77,13 @@ h5 #plans {
 }
 
 a {
-    color: var(--color-primary);
     text-decoration: none;
-    transition: var(--transition-fast);
+    transition: all 0.3s ease;
+    color: var(--color-primary);
 }
 
 a:hover {
-    color: var(--color-primary-light);
+    color: var(--color-primary-dark);
 }
 
 /* ====================================== */
@@ -121,48 +91,58 @@ a:hover {
 /* ====================================== */
 
 /* Buttons */
+/* =========================================
+   2. BUTTONS 
+   ========================================= */
 .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0.75rem 1.5rem;
+    border-radius: var(--border-radius);
+    padding: 14px 28px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    border-radius: 4px;
-    /* Slight radius, athletic feel */
+    letter-spacing: 1.5px;
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
     border: 1px solid transparent;
     cursor: pointer;
-    transition: all var(--transition-base);
     font-size: 0.95rem;
 }
 
 .btn-primary {
-    background: var(--color-primary);
-    color: var(--color-white);
+    background-color: var(--color-primary);
+    color: white;
     border-color: var(--color-primary);
+    box-shadow: 0 4px 15px rgba(220, 20, 60, 0.3);
 }
 
 .btn-primary:hover {
-    background: var(--color-primary-dark);
-    box-shadow: var(--shadow-glow);
+    background-color: var(--color-primary-dark);
+    border-color: var(--color-primary-dark);
     transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(220, 20, 60, 0.5);
 }
 
 .btn-outline {
     background: transparent;
-    color: var(--color-primary);
-    border-color: var(--color-primary);
+    color: var(--color-text-main);
+    border: 1px solid var(--color-border);
 }
 
 .btn-outline:hover {
-    background: rgba(239, 68, 68, 0.1);
-    color: var(--color-primary-light);
+    border-color: var(--color-text-main);
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+}
+
+.btn-lg {
+    padding: 18px 40px;
+    font-size: 1.1rem;
 }
 
 .btn-secondary {
     background: var(--color-surface);
-    color: var(--color-text-primary);
+    color: var(--color-text-main);
     border-color: var(--color-border);
 }
 
@@ -709,6 +689,193 @@ html {
     75% {
         transform: translate(-50px, 50px) rotate(270deg);
     }
+}
+
+/* --- AGGRESSIVE CARDS --- */
+.card-sport {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 0;
+    padding: 2rem;
+    transition: all 0.3s ease;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.card-sport:hover {
+    transform: translateY(-5px);
+    border-color: var(--color-border-active);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.card-sport::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--color-primary);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+}
+
+.card-sport:hover::after {
+    transform: scaleX(1);
+}
+
+.card-sport .icon-box {
+    font-size: 2.5rem;
+    color: var(--color-primary);
+    margin-bottom: 1.5rem;
+}
+
+/* --- NAVBAR --- */
+.navbar-glass {
+    background: transparent;
+    padding: 1.5rem 0;
+    transition: all 0.4s ease;
+}
+
+.navbar-glass.scrolled {
+    background: rgba(5, 5, 9, 0.95);
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--color-border);
+    backdrop-filter: blur(10px);
+}
+
+.nav-link {
+    font-family: var(--font-heading);
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    color: var(--color-text-main) !important;
+    opacity: 0.7;
+    margin: 0 10px;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    opacity: 1;
+    color: var(--color-primary) !important;
+}
+
+.nav-link.join-btn {
+    background: var(--color-primary);
+    color: white !important;
+    opacity: 1;
+    padding: 8px 20px;
+    border: 1px solid var(--color-primary);
+}
+
+.nav-link.join-btn:hover {
+    background: transparent;
+    color: var(--color-primary) !important;
+}
+
+/* --- HERO AGGRESSIVE --- */
+.hero-aggressive {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(90deg, #050509 0%, rgba(5, 5, 9, 0.7) 60%, rgba(5, 5, 9, 0.2) 100%), url('../images/hero-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    padding-top: 80px;
+}
+
+.hero-content h1 {
+    font-size: 4.5rem;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    font-style: italic;
+}
+
+.hero-content .lead {
+    font-size: 1.25rem;
+    font-weight: 300;
+    opacity: 0.8;
+    max-width: 600px;
+    margin-bottom: 2.5rem;
+}
+
+@media (max-width: 768px) {
+    .hero-content h1 {
+        font-size: 3rem;
+    }
+
+    .hero-aggressive {
+        text-align: left;
+    }
+
+    /* Keep left align on mobile for sporty look */
+}
+
+/* --- SECTION HEADERS --- */
+.section-header {
+    margin-bottom: 4rem;
+}
+
+.section-label {
+    color: var(--color-primary);
+    font-family: var(--font-heading);
+    letter-spacing: 3px;
+    font-size: 0.9rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+/* --- ANIMATIONS --- */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-up {
+    opacity: 0;
+    animation-fill-mode: forwards;
+    /* Stays visible after animation */
+}
+
+.animate-up.visible {
+    animation: fadeUp 0.8s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+}
+
+.delay-1 {
+    animation-delay: 0.1s;
+}
+
+.delay-2 {
+    animation-delay: 0.2s;
+}
+
+.delay-3 {
+    animation-delay: 0.3s;
+}
+
+/* Scale Up Effect for Featured Cards */
+.scale-up {
+    transform: scale(1.05);
+    z-index: 10;
+}
+
+@media (max-width: 991px) {
+    .scale-up {
+        transform: scale(1);
+    }
+
+    /* Disable scale on mobile */
 }
 
 .schedule-section .container {

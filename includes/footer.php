@@ -186,5 +186,43 @@ src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1"
 -->
 
 <!-- Close the HTML body and document tags -->
+    <!-- Scroll Animation Script -->
+    <script>
+        // Simple Intersection Observer for scroll animations
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target); // Only animate once
+                    }
+                });
+            }, observerOptions);
+
+            const animatedElements = document.querySelectorAll('.animate-up, .card-sport, .hero-content h1, .hero-content p, .section-header');
+            animatedElements.forEach((el, index) => {
+                el.classList.add('animate-up'); // Ensure class exists
+                if(index % 3 === 1) el.classList.add('delay-1');
+                 if(index % 3 === 2) el.classList.add('delay-2');
+                observer.observe(el);
+            });
+            
+            // Navbar scroll effect
+            window.addEventListener('scroll', () => {
+                const nav = document.querySelector('.navbar-glass');
+                if (window.scrollY > 50) {
+                    nav.classList.add('scrolled');
+                } else {
+                    nav.classList.remove('scrolled');
+                }
+            });
+        });
+    </script>
 </body>
 </html>

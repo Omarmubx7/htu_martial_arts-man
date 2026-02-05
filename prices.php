@@ -26,7 +26,6 @@ include 'includes/header.php';
         
         if ($result->num_rows > 0) {
             while($row = $result->fetch_assoc()) {
-                // heuristic to separate plans
                 if (stripos($row['type'], 'Private') !== false || stripos($row['type'], 'Personal') !== false || stripos($row['type'], 'Session') !== false) {
                     $one_off_plans[] = $row;
                 } else {
@@ -36,47 +35,61 @@ include 'includes/header.php';
         }
         ?>
 
-        <!-- Memberships Grid -->
-        <h3 class="text-center mb-5">Recurring Memberships</h3>
-        <div class="row g-4 justify-content-center mb-5">
+        <!-- recurring Memberships - 3 Col Grid -->
+        <div class="row g-0 justify-content-center align-items-stretch">
             <?php if (!empty($recurring_plans)): ?>
-                <?php foreach($recurring_plans as $plan): ?>
-                <div class="col-md-6 col-lg-4">
-                    <div class="card h-100 text-center hover-card d-flex flex-column">
-                        <div class="card-body p-4 d-flex flex-column flex-grow-1">
-                            <h4 class="mb-3"><?php echo htmlspecialchars($plan['type']); ?></h4>
-                            <div class="display-5 fw-bold text-primary mb-3">
-                                $<?php echo number_format($plan['price'], 0); ?><span class="fs-6 text-muted fw-normal">/mo</span>
-                            </div>
-                            <p class="text-muted mb-4"><?php echo htmlspecialchars($plan['description']); ?></p>
-                            
-                            <div class="mt-auto w-100">
-                                <a href="signup.php?plan_id=<?php echo $plan['id']; ?>" class="btn btn-primary w-100">Choose Plan</a>
-                            </div>
+                <?php foreach($recurring_plans as $index => $plan): 
+                    $is_popular = (stripos($plan['type'], 'Elite') !== false || stripos($plan['type'], 'Unlimited') !== false || $index === 1);
+                    $card_class = $is_popular ? 'card-sport border-active scale-up' : 'card-sport';
+                    $btn_class = $is_popular ? 'btn-primary' : 'btn-outline';
+                ?>
+                <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                    <div class="<?php echo $card_class; ?> text-center h-100 d-flex flex-column p-5" style="<?php echo $is_popular ? 'z-index: 2; border-color: var(--color-primary); background: #0f0f15;' : ''; ?>">
+                        <?php if($is_popular): ?>
+                            <div class="badge bg-primary position-absolute top-0 start-50 translate-middle-x mt-3">MOST POPULAR</div>
+                        <?php endif; ?>
+                        
+                        <h3 class="mb-3 text-uppercase"><?php echo htmlspecialchars($plan['type']); ?></h3>
+                        <div class="display-3 fw-bold text-white mb-2">
+                            <span class="fs-4 align-top">$</span><?php echo number_format($plan['price'], 0); ?>
+                        </div>
+                        <p class="text-muted small mb-4">PER MONTH</p>
+                        
+                        <ul class="list-unstyled text-start mb-5 mx-auto" style="max-width: 200px;">
+                            <li class="mb-2"><i class="bi bi-check2 text-primary me-2"></i>Access to facilities</li>
+                            <li class="mb-2"><i class="bi bi-check2 text-primary me-2"></i>Expert coaching</li>
+                            <?php if($is_popular): ?>
+                                <li class="mb-2"><i class="bi bi-check2 text-primary me-2"></i>Unlimited Classes</li>
+                                <li class="mb-2"><i class="bi bi-check2 text-primary me-2"></i>Free Gear Rental</li>
+                            <?php endif; ?>
+                        </ul>
+                        
+                        <div class="mt-auto w-100">
+                            <a href="signup.php?plan_id=<?php echo $plan['id']; ?>" class="btn <?php echo $btn_class; ?> w-100 btn-lg">Choose Plan</a>
                         </div>
                     </div>
                 </div>
                 <?php endforeach; ?>
-            <?php else: ?>
-                <div class="col-12 text-center text-muted">No memberships available.</div>
             <?php endif; ?>
         </div>
 
         <!-- Services Grid (if any) -->
         <?php if (!empty($one_off_plans)): ?>
-        <h3 class="text-center mb-5 pt-5 border-top border-dark">Private Training & Services</h3>
+        <div class="section-header text-center mt-5 pt-5">
+            <span class="section-label">PRIVATE TRAINING</span>
+            <h3 class="mb-4">Personalized Sessions</h3>
+        </div>
+        
         <div class="row g-4 justify-content-center">
             <?php foreach($one_off_plans as $plan): ?>
-            <div class="col-md-6 col-lg-4">
-                <div class="card h-100 text-center hover-card">
-                    <div class="card-body p-4">
-                        <h4 class="mb-3"><?php echo htmlspecialchars($plan['type']); ?></h4>
-                        <div class="display-5 fw-bold text-primary mb-3">
-                            $<?php echo number_format($plan['price'], 0); ?>
-                        </div>
-                        <p class="text-muted mb-4"><?php echo htmlspecialchars($plan['description']); ?></p>
-                        <a href="signup.php?plan_id=<?php echo $plan['id']; ?>" class="btn btn-outline w-100">Book Session</a>
+            <div class="col-md-4">
+                <div class="card-sport text-center">
+                    <h4 class="mb-3"><?php echo htmlspecialchars($plan['type']); ?></h4>
+                    <div class="display-5 fw-bold text-white mb-3">
+                        $<?php echo number_format($plan['price'], 0); ?>
                     </div>
+                    <p class="text-muted mb-4"><?php echo htmlspecialchars($plan['description']); ?></p>
+                    <a href="signup.php?plan_id=<?php echo $plan['id']; ?>" class="btn btn-outline w-100">Book Session</a>
                 </div>
             </div>
             <?php endforeach; ?>
